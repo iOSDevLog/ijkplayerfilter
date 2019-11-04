@@ -1071,11 +1071,18 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
 
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
+                    
+                    mediaPlayer = ijkMediaPlayer;
+                    double k1 = -0.314281;
+                    double k2 = 0.087421;
+                    String filter = "lenscorrection=cx=0.5:cy=0.5:k1=" + k1 + ":k2=" + k2;
+
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "vf0", filter);
                 }
-                mediaPlayer = ijkMediaPlayer;
             }
             break;
         }
+
 
         if (mSettings.getEnableDetachedSurfaceTextureView()) {
             mediaPlayer = new TextureMediaPlayer(mediaPlayer);
