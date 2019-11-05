@@ -22,8 +22,8 @@
 
 @interface IJKDemoSampleViewController () <UITableViewDataSource, UITableViewDelegate>
 
-@property(nonatomic,strong) IBOutlet UITableView *tableView;
-@property(nonatomic,strong) NSArray *sampleList;
+@property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) NSArray *sampleList;
 
 @end
 
@@ -35,6 +35,10 @@
     self.title = @"M3U8";
 
     NSMutableArray *sampleList = [[NSMutableArray alloc] init];
+    [sampleList addObject:@[@"http://192.168.1.254:8192",
+                            @"http://192.168.1.254:8192"]];
+    [sampleList addObject:@[@"http://192.168.1.254:8192/xxx.mov",
+                            @"http://192.168.1.254:8192/xxx.mov"]];
 
     [sampleList addObject:@[@"bipbop basic master playlist",
                             @"http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"]];
@@ -105,7 +109,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
     NSArray *item = self.sampleList[indexPath.row];
-    NSURL   *url  = [NSURL URLWithString:item[1]];
+    NSURL *url = [NSURL URLWithString:item[1]];
 
     [self.navigationController presentViewController:[[IJKVideoViewController alloc] initWithURL:url] animated:YES completion:^{}];
 }

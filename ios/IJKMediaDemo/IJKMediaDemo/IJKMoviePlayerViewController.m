@@ -28,11 +28,11 @@
 
 + (void)presentFromViewController:(UIViewController *)viewController withTitle:(NSString *)title URL:(NSURL *)url completion:(void (^)())completion {
     IJKDemoHistoryItem *historyItem = [[IJKDemoHistoryItem alloc] init];
-    
+
     historyItem.title = title;
     historyItem.url = url;
     [[IJKDemoHistory instance] add:historyItem];
-    
+
     [viewController presentViewController:[[IJKVideoViewController alloc] initWithURL:url] animated:YES completion:completion];
 }
 
@@ -53,7 +53,7 @@
     return self;
 }
 
-#define EXPECTED_IJKPLAYER_VERSION (1 << 16) & 0xFF) | 
+#define EXPECTED_IJKPLAYER_VERSION (1 << 16) & 0xFF) |
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -75,8 +75,12 @@
 
     IJKFFOptions *options = [IJKFFOptions optionsByDefault];
 
+    // [options setOptionValue:@"lenscorrection=cx=0.5:cy=0.5:k1=-0.314281:k2=0.087421" forKey:@"vf0" ofCategory:kIJKFFOptionCategoryPlayer];
+    // [options setOptionValue:@"scale=iw:ih/2" forKey:@"vf0" ofCategory:kIJKFFOptionCategoryPlayer];
+    [options setOptionValue:@"lenscorrection=cx=0.5:cy=0.5:k1=-0.314281:k2=0.087421 [len]; [len] scale=iw:ih/2 [out]" forKey:@"vf0" ofCategory:kIJKFFOptionCategoryPlayer];
+
     self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:self.url withOptions:options];
-    self.player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+    self.player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.player.view.frame = self.view.bounds;
     self.player.scalingMode = IJKMPMovieScalingModeAspectFit;
     self.player.shouldAutoplay = YES;
@@ -90,7 +94,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+
     [self installMovieNotificationObservers];
 
     [self.player prepareToPlay];
@@ -98,12 +102,12 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    
+
     [self.player shutdown];
     [self removeMovieNotificationObservers];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
     return UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
 }
 
@@ -140,7 +144,7 @@
     if ([self.player isKindOfClass:[IJKFFMoviePlayerController class]]) {
         IJKFFMoviePlayerController *player = self.player;
         player.shouldShowHudView = !player.shouldShowHudView;
-        
+
         sender.title = (player.shouldShowHudView ? @"HUD On" : @"HUD Off");
     }
 }
@@ -183,7 +187,7 @@
     [self.mediaControl continueDragMediaSlider];
 }
 
-- (void)loadStateDidChange:(NSNotification*)notification
+- (void)loadStateDidChange:(NSNotification *)notification
 {
     //    MPMovieLoadStateUnknown        = 0,
     //    MPMovieLoadStatePlayable       = 1 << 0,
@@ -201,15 +205,14 @@
     }
 }
 
-- (void)moviePlayBackDidFinish:(NSNotification*)notification
+- (void)moviePlayBackDidFinish:(NSNotification *)notification
 {
     //    MPMovieFinishReasonPlaybackEnded,
     //    MPMovieFinishReasonPlaybackError,
     //    MPMovieFinishReasonUserExited
     int reason = [[[notification userInfo] valueForKey:IJKMPMoviePlayerPlaybackDidFinishReasonUserInfoKey] intValue];
 
-    switch (reason)
-    {
+    switch (reason) {
         case IJKMPMovieFinishReasonPlaybackEnded:
             NSLog(@"playbackStateDidChange: IJKMPMovieFinishReasonPlaybackEnded: %d\n", reason);
             break;
@@ -228,12 +231,12 @@
     }
 }
 
-- (void)mediaIsPreparedToPlayDidChange:(NSNotification*)notification
+- (void)mediaIsPreparedToPlayDidChange:(NSNotification *)notification
 {
     NSLog(@"mediaIsPreparedToPlayDidChange\n");
 }
 
-- (void)moviePlayBackStateDidChange:(NSNotification*)notification
+- (void)moviePlayBackStateDidChange:(NSNotification *)notification
 {
     //    MPMoviePlaybackStateStopped,
     //    MPMoviePlaybackStatePlaying,
@@ -242,8 +245,7 @@
     //    MPMoviePlaybackStateSeekingForward,
     //    MPMoviePlaybackStateSeekingBackward
 
-    switch (_player.playbackState)
-    {
+    switch (_player.playbackState) {
         case IJKMPMoviePlaybackStateStopped: {
             NSLog(@"IJKMPMoviePlayBackStateDidChange %d: stoped", (int)_player.playbackState);
             break;
@@ -275,24 +277,24 @@
 #pragma mark Install Movie Notifications
 
 /* Register observers for the various movie object notifications. */
--(void)installMovieNotificationObservers
+- (void)installMovieNotificationObservers
 {
-	[[NSNotificationCenter defaultCenter] addObserver:self
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(loadStateDidChange:)
                                                  name:IJKMPMoviePlayerLoadStateDidChangeNotification
                                                object:_player];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(moviePlayBackDidFinish:)
                                                  name:IJKMPMoviePlayerPlaybackDidFinishNotification
                                                object:_player];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(mediaIsPreparedToPlayDidChange:)
                                                  name:IJKMPMediaPlaybackIsPreparedToPlayDidChangeNotification
                                                object:_player];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(moviePlayBackStateDidChange:)
                                                  name:IJKMPMoviePlayerPlaybackStateDidChangeNotification
                                                object:_player];
@@ -301,7 +303,7 @@
 #pragma mark Remove Movie Notification Handlers
 
 /* Remove the movie notification observers from the movie object. */
--(void)removeMovieNotificationObservers
+- (void)removeMovieNotificationObservers
 {
     [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerLoadStateDidChangeNotification object:_player];
     [[NSNotificationCenter defaultCenter]removeObserver:self name:IJKMPMoviePlayerPlaybackDidFinishNotification object:_player];

@@ -1071,14 +1071,18 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
 
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
-                    
-                    mediaPlayer = ijkMediaPlayer;
+
                     double k1 = -0.314281;
                     double k2 = 0.087421;
-                    String filter = "lenscorrection=cx=0.5:cy=0.5:k1=" + k1 + ":k2=" + k2;
+                    String filter = "lenscorrection=cx=0.5:cy=0.5:k1=" + k1 + ":k2=" + k2 + " [len]; [len] scale=iw:ih/2 [out]";
 
+                    // Filter
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "vf0", filter);
-                }
+                    // 清空DNS,有时因为在APP里面要播放多种类型的视频(如:MP4,直播,直播平台保存的视频,和其他http视频), 有时会造成因为DNS的问题而报10000问题的
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "dns_cache_clear", 1);
+
+
+                    mediaPlayer = ijkMediaPlayer;}
             }
             break;
         }
